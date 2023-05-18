@@ -44,6 +44,10 @@ async function run() {
 
 
         })
+        app.get('/alltoys', async (req, res) => {
+            const result = await toyCollactions.find().toArray();
+            res.send(result)
+        })
 
         app.get("/alltoys/:hero", async (req, res) => {
             const hero = req.params.hero;
