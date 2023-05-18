@@ -11,8 +11,6 @@ const port = process.env.PORT || 5000;
 app.use(cors())
 app.use(express.json())
 
-// oKSq33nAwZXzH4sj
-// HerosUniverse
 
 
 
@@ -36,6 +34,22 @@ async function run() {
         await client.connect();
         const toyCollactions = client.db("toysDB").collection('toys');
 
+        const indexKeys = { name: 1 }
+        const indexOptions = { name: "namefield" }
+        const result = await toyCollactions.createIndex(indexKeys, indexOptions)
+        console.log(result)
+
+        app.get("/searchBy/:text", async (req, res) => {
+            const seachText = req.params.text;
+            const result = await toyCollactions.find({
+                $or: [
+                    {
+                        name: { $regex: seachText, $options: 'i' }
+                    },
+                ]
+            }).toArray()
+            res.send(result)
+        })
 
         app.post("/addtoys", async (req, res) => {
             const body = req.body;
@@ -45,7 +59,14 @@ async function run() {
 
         })
         app.get('/alltoys', async (req, res) => {
-            const result = await toyCollactions.find().toArray();
+            const result = await toyCollactions.find({}).toArray();
+            res.send(result)
+        })
+
+        app.get('/detailes/:id', async (req, res) => {
+            const id = req.params.id;
+            const qurey = { _id: new ObjectId(id) }
+            const result = await toyCollactions.findOne(qurey);
             res.send(result)
         })
 
