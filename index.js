@@ -26,16 +26,23 @@ const client = new MongoClient(uri, {
         strict: true,
         deprecationErrors: true,
     },
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    maxPoolSize: 20
 
 });
 
 async function run() {
 
     try {
-
-
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        client.connect((err) => {
+            if (err) {
+                console.log(err)
+                return
+            }
+        })
+        // await client.connect();
         const toyCollactions = client.db("toysDB").collection('toys');
 
         const indexKeys = { name: 1 }
