@@ -28,7 +28,7 @@ const client = new MongoClient(uri, {
     },
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    maxPoolSize: 20
+    maxPoolSize: 40
 
 });
 
@@ -44,6 +44,7 @@ async function run() {
         })
         // await client.connect();
         const toyCollactions = client.db("toysDB").collection('toys');
+        const heroCOllaction =client.db("toysDB").collection("heros")
 
         const indexKeys = { name: 1 }
         const indexOptions = { name: "namefield" }
@@ -71,6 +72,18 @@ async function run() {
         })
         app.get('/alltoys', async (req, res) => {
             const result = await toyCollactions.find({}).toArray();
+            res.send(result)
+        })
+        app.get('/heros', async (req, res) => {
+            const result = await heroCOllaction.find({}).toArray();
+            res.send(result)
+        })
+        app.get('/asen', async (req, res) => {
+            const result = await toyCollactions.find({}).sort({ "price": 1 }).toArray();
+            res.send(result)
+        })
+        app.get('/desan', async (req, res) => {
+            const result = await toyCollactions.find({}).sort({ "price": -1 }).toArray();
             res.send(result)
         })
 
