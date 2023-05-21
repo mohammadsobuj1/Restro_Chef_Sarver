@@ -36,15 +36,15 @@ async function run() {
 
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         // await client.connect();
         const toyCollactions = client.db("toysDB").collection('toys');
         const heroCOllaction = client.db("toysDB").collection("heros")
 
-        const indexKeys = { name: 1 }
-        const indexOptions = { name: "namefield" }
-        const result = await toyCollactions.createIndex(indexKeys, indexOptions)
-        console.log(result)
+        // const indexKeys = { name: 1 }
+        // const indexOptions = { name: "namefield" }
+        // const result = await toyCollactions.createIndex(indexKeys, indexOptions)
+        // console.log(result)
 
         app.get("/searchBy/:text", async (req, res) => {
             const seachText = req.params.text;
@@ -110,8 +110,12 @@ async function run() {
         app.get('/detailes/:id', async (req, res) => {
             const id = req.params.id;
             const qurey = { _id: new ObjectId(id) }
+           try {
             const result = await toyCollactions.findOne(qurey);
             res.send(result)
+           } catch (error) {
+            res.send(error)
+           }
         })
         app.get('/update/:id', async (req, res) => {
             const id = req.params.id;
