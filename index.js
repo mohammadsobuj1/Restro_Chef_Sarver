@@ -36,15 +36,10 @@ async function run() {
 
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        client.connect((err) => {
-            if (err) {
-                console.log(err)
-                return
-            }
-        })
+        await client.connect();
         // await client.connect();
         const toyCollactions = client.db("toysDB").collection('toys');
-        const heroCOllaction =client.db("toysDB").collection("heros")
+        const heroCOllaction = client.db("toysDB").collection("heros")
 
         const indexKeys = { name: 1 }
         const indexOptions = { name: "namefield" }
@@ -53,38 +48,63 @@ async function run() {
 
         app.get("/searchBy/:text", async (req, res) => {
             const seachText = req.params.text;
-            const result = await toyCollactions.find({
-                $or: [
-                    {
-                        name: { $regex: seachText, $options: 'i' }
-                    },
-                ]
-            }).toArray()
-            res.send(result)
+            try {
+                const result = await toyCollactions.find({
+                    $or: [
+                        {
+                            name: { $regex: seachText, $options: 'i' }
+                        },
+                    ]
+                }).toArray()
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
         })
 
         app.post("/addtoys", async (req, res) => {
             const body = req.body;
-            const result = await toyCollactions.insertOne(body);
-            res.send(result)
+            try {
+                const result = await toyCollactions.insertOne(body);
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
 
 
         })
         app.get('/alltoys', async (req, res) => {
-            const result = await toyCollactions.find({}).toArray();
-            res.send(result)
+            try {
+                const result = await toyCollactions.find({}).toArray();
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
         })
+
         app.get('/heros', async (req, res) => {
-            const result = await heroCOllaction.find({}).toArray();
-            res.send(result)
+            try {
+                const result = await heroCOllaction.find({}).toArray();
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
         })
         app.get('/asen', async (req, res) => {
-            const result = await toyCollactions.find({}).sort({ "price": 1 }).toArray();
-            res.send(result)
+            try {
+                const result = await toyCollactions.find({}).sort({ "price": 1 }).toArray();
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
         })
         app.get('/desan', async (req, res) => {
-            const result = await toyCollactions.find({}).sort({ "price": -1 }).toArray();
-            res.send(result)
+            try {
+                const result = await toyCollactions.find({}).sort({ "price": -1 }).toArray();
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
         })
 
         app.get('/detailes/:id', async (req, res) => {
@@ -96,29 +116,41 @@ async function run() {
         app.get('/update/:id', async (req, res) => {
             const id = req.params.id;
             const qurey = { _id: new ObjectId(id) }
-            const result = await toyCollactions.findOne(qurey);
-            res.send(result)
+            try {
+                const result = await toyCollactions.findOne(qurey);
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
         })
 
         app.get("/alltoys/:hero", async (req, res) => {
             const hero = req.params.hero;
 
-            if (hero == "marvel" || hero == "dc" || hero == "starwear") {
-                const result = await toyCollactions.find({
-                    categorey: req.params.hero
-                }).toArray();
-                return res.send(result)
-            }
-            else {
-                const result = await toyCollactions.find({}).toArray();
-                res.send(result)
+            try {
+                if (hero == "marvel" || hero == "dc" || hero == "starwear") {
+                    const result = await toyCollactions.find({
+                        categorey: req.params.hero
+                    }).toArray();
+                    return res.send(result)
+                }
+                else {
+                    const result = await toyCollactions.find({}).toArray();
+                    res.send(result)
+                }
+            } catch (error) {
+                res.send(error)
             }
         })
 
         app.get("/mytoys/:email", async (req, res) => {
 
-            const result = await toyCollactions.find({ email: req.params.email }).toArray();
-            res.send(result)
+            try {
+                const result = await toyCollactions.find({ email: req.params.email }).toArray();
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
         })
 
 
@@ -136,16 +168,24 @@ async function run() {
                     description: Updateduser.description,
                 },
             }
-            const result = await toyCollactions.updateOne(filter, updateToy, options)
-            res.send(result)
+            try {
+                const result = await toyCollactions.updateOne(filter, updateToy, options)
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
         })
 
 
         app.delete("/mytoys/:id", async (req, res) => {
             const id = req.params.id;
             const qurey = { _id: new ObjectId(id) }
-            const result = await toyCollactions.deleteOne(qurey);
-            res.send(result)
+            try {
+                const result = await toyCollactions.deleteOne(qurey);
+                res.send(result)
+            } catch (error) {
+                res.send(error)
+            }
         })
 
         // Send a ping to confirm a successful connection
